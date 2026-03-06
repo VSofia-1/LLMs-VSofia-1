@@ -1,1 +1,10 @@
-
+El Problema:
+Quieres analizar la estructura de un dataset de alta dimensionalidad visualizando los datos en un espacio reducido de dos dimensiones.
+Tu Misión:
+Escribe una función llamada reducir_dimensionalidad_tsne(df, columnas, random_state) que:
+1.	Seleccione del DataFrame únicamente las columnas indicadas en columnas.
+2.	Estandarice los datos utilizando StandardScaler de sklearn.
+3.	Aplique TSNE de sklearn.manifold para reducir la dimensionalidad a 2 componentes.
+4.	Transforme los datos al nuevo espacio reducido.
+Debe devolver:
+•	Un numpy array de tamaño (n_samples, 2) con las coordenadas transformadas.
