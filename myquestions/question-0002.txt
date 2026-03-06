@@ -1,1 +1,12 @@
-
+El Problema:
+Quieres medir qué tan bien separa un modelo de clasificación las clases utilizando la curva ROC.
+Tu Misión:
+Escribe una función llamada calcular_curva_roc(y_true, y_scores) que:
+1.	Utilice roc_curve de sklearn.metrics para calcular:
+o	tasa de verdaderos positivos (TPR)
+o	tasa de falsos positivos (FPR)
+2.	Calcule el AUC (Area Under the Curve) usando roc_auc_score.
+Debe devolver:
+•	Un numpy array con los valores de FPR.
+•	Un numpy array con los valores de TPR.
+•	Un float con el valor del AUC.
