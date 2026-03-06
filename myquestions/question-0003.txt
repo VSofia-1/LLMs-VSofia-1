@@ -1,1 +1,10 @@
-
+El Problema:
+Quieres dividir un dataset en varios subconjuntos para validación cruzada manual utilizando K-Fold.
+Tu Misión:
+Escribe una función llamada generar_splits_kfold(X, y, k, random_state) que:
+1.	Utilice KFold de sklearn.model_selection.
+2.	Genere k particiones del dataset.
+3.	Para cada partición obtenga índices de entrenamiento y prueba.
+Debe devolver:
+•	Una lista de tuplas donde cada elemento tenga:
+(train_indices, test_indices) como numpy arrays.
