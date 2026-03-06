@@ -1,1 +1,12 @@
+El Problema:
+Quieres crear una representación de datos que capture relaciones de similitud entre observaciones utilizando un kernel gaussiano (RBF).
+Tu Misión:
+Escribe una función llamada calcular_kernel_rbf(X, gamma) que:
+1.	Reciba una matriz X con las características del dataset.
+2.	Utilice rbf_kernel de sklearn.metrics.pairwise.
+3.	Calcule la matriz de similitud entre todas las observaciones.
+Debe devolver:
+•	Un numpy array con la matriz de kernel RBF de tamaño (n_samples, n_samples).
 
+"R2": valor
+}
