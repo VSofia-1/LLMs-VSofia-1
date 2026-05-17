@@ -4,40 +4,7 @@ from pandas.testing import assert_frame_equal
 
 
 # ---------------------------------------------------------
-# 1. GENERADOR DE DATOS ALEATORIOS
-# ---------------------------------------------------------
-def generar_casos_geotecnicos(n_muestras=100):
-
-    rng = np.random.default_rng()
-
-    data = {
-        'sensor_id': rng.integers(1000, 2000, n_muestras),
-        'pluviosidad_reciente': rng.uniform(0, 150, n_muestras),
-        'presion_de_poros': rng.uniform(20, 100, n_muestras),
-        'inclinacion_gradual': rng.uniform(5, 45, n_muestras),
-        'estabilidad': rng.choice(['Estable', 'Inestable'], n_muestras),
-        'sensor_auxiliar_A': rng.uniform(0, 10, n_muestras),
-        'sensor_auxiliar_B': rng.uniform(0, 10, n_muestras)
-    }
-
-    df = pd.DataFrame(data)
-
-    # Inyectar nulos
-    df.loc[
-        rng.choice(df.index, int(n_muestras * 0.30), replace=False),
-        'sensor_auxiliar_B'
-    ] = np.nan
-
-    df.loc[
-        rng.choice(df.index, int(n_muestras * 0.05), replace=False),
-        'pluviosidad_reciente'
-    ] = np.nan
-
-    return df
-
-
-# ---------------------------------------------------------
-# 2. FUNCIÓN PRINCIPAL
+# 1. FUNCIÓN PRINCIPAL
 # ---------------------------------------------------------
 def analizar_umbrales_geotecnicos(df, umbral_nulos):
 
@@ -87,32 +54,7 @@ def analizar_umbrales_geotecnicos(df, umbral_nulos):
 
 
 # ---------------------------------------------------------
-# 3. CASO DE USO
-# ---------------------------------------------------------
-def generar_caso_de_uso_analisis_geotecnico():
-
-    df = generar_casos_geotecnicos(
-        np.random.randint(50, 150)
-    )
-
-    umbral_nulos = np.random.uniform(0.1, 0.4)
-
-    input_data = {
-        'df': df.copy(),
-        'umbral_nulos': umbral_nulos
-    }
-
-    # OUTPUT ESPERADO
-    salida_esperada = analizar_umbrales_geotecnicos(
-        df.copy(),
-        umbral_nulos
-    )
-
-    return input_data, salida_esperada
-
-
-# ---------------------------------------------------------
-# 4. EJECUCIÓN Y VALIDACIÓN
+# EJECUCIÓN Y VALIDACIÓN
 # ---------------------------------------------------------
 if __name__ == "__main__":
 
