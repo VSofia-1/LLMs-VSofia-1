@@ -9,6 +9,34 @@ def calcular_kernel_rbf(X, gamma):
 
     return rbf_kernel(X, gamma=gamma)
 
+# ---------------- CASO DE USO ----------------
+
+def generar_caso_de_uso_kernel():
+    
+    # número aleatorio de muestras y características
+    n_samples = random.randint(5, 10)
+    n_features = random.randint(2, 3)
+    
+    # generar matriz X aleatoria
+    X = np.random.randn(n_samples, n_features)
+    
+    # gamma aleatorio
+    gamma = random.uniform(0.1, 2.0)
+    
+    # calcular kernel esperado
+    kernel_matrix = rbf_kernel(X, gamma=gamma)
+    
+    input = {
+        "X": X,
+        "gamma": gamma
+    }
+    
+    output = kernel_matrix
+    
+    return input, output
+
+# ---------------- PRUEBA ----------------
+
 input_case, output_case = generar_caso_de_uso_kernel()
 
 # usar tu función
@@ -20,5 +48,12 @@ resultado = calcular_kernel_rbf(
 print("INPUT:")
 print(input_case)
 
-print("\nOUTPUT")
+print("\nOUTPUT ESPERADO:")
+print(output_case)
+
+print("\nOUTPUT DE TU FUNCIÓN:")
 print(resultado)
+
+# verificar si son iguales
+print("\n¿Son iguales?")
+print(np.allclose(output_case, resultado))
