@@ -32,16 +32,17 @@ def calcular_error_precio_casas(X, y):
     mse = mean_squared_error(y_test, y_pred)
 
     return float(mse)
-
 # ---------------------------------------------------------
 # EJECUCIÓN
 # ---------------------------------------------------------
 if __name__ == "__main__":
 
+    # Generar caso de uso
     info, X, y = (
         generar_caso_de_uso_calcular_error_precio_casas()
     )
 
+    # Mostrar información
     print("=== INFORMACIÓN ===")
     print(info)
 
@@ -51,7 +52,9 @@ if __name__ == "__main__":
     print("\n=== DATOS y ===")
     print(y[:5])
 
+    # Llamar implementación
     resultado = calcular_error_precio_casas(X, y)
 
+    # Mostrar resultado
     print("\n=== MSE DEL MODELO ===")
     print(resultado)
