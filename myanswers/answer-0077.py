@@ -3,6 +3,34 @@ import numpy as np
 from pandas.testing import assert_frame_equal
 
 
+def generar_casos_geotecnicos(n_muestras=100):
+
+    rng = np.random.default_rng()
+
+    data = {
+        'sensor_id': rng.integers(1000, 2000, n_muestras),
+        'pluviosidad_reciente': rng.uniform(0, 150, n_muestras),
+        'presion_de_poros': rng.uniform(20, 100, n_muestras),
+        'inclinacion_gradual': rng.uniform(5, 45, n_muestras),
+        'estabilidad': rng.choice(['Estable', 'Inestable'], n_muestras),
+        'sensor_auxiliar_A': rng.uniform(0, 10, n_muestras),
+        'sensor_auxiliar_B': rng.uniform(0, 10, n_muestras)
+    }
+
+    df = pd.DataFrame(data)
+
+    # Inyectar nulos
+    df.loc[
+        rng.choice(df.index, int(n_muestras * 0.30), replace=False),
+        'sensor_auxiliar_B'
+    ] = np.nan
+
+    df.loc[
+        rng.choice(df.index, int(n_muestras * 0.05), replace=False),
+        'pluviosidad_reciente'
+    ] = np.nan
+
+    return df
 # ---------------------------------------------------------
 # 1. FUNCIÓN PRINCIPAL
 # ---------------------------------------------------------
