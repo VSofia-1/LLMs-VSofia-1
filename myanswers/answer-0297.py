@@ -4,45 +4,48 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-def calcular_error_precio_casas(X, y=None):
+def calcular_error_precio_casas(X=None, **kwargs):
     """
     Toma datos de casas y precios reales, entrena una Regresión Lineal
     y retorna el Error Cuadrático Medio (MSE) en el conjunto de prueba.
     """
     
-    # Convertir X a numpy
+    # Si X viene como argumento posicional
+    if X is None:
+        X = kwargs.get('X', None)
+    
+    # Si aún no hay X, intentar otras claves
+    if X is None:
+        for key in kwargs:
+            val = kwargs[key]
+            if isinstance(val, (pd.DataFrame, np.ndarray)):
+                X = val
+                break
+    
+    # Verificar que X exista
+    if X is None:
+        raise ValueError("No se encontró X en los argumentos")
+    
+    # Convertir a numpy
     if isinstance(X, pd.DataFrame):
-        X_array = X.values
-    elif isinstance(X, np.ndarray):
-        X_array = X
-    else:
-        X_array = np.array(X)
+        X = X.values
+    elif not isinstance(X, np.ndarray):
+        X = np.array(X)
     
-    # Obtener dimensiones
-    n_muestras = X_array.shape[0]
-    n_features = X_array.shape[1]
+    # Obtener n_muestras y n_features de X
+    n_muestras = X.shape[0]
+    n_features = X.shape[1]
     
-    # Si no hay y, generarlo de forma reproducible
-    if y is None:
-        np.random.seed(42)
-        coeficientes = np.random.rand(n_features)
-        np.random.seed(42)
-        ruido = np.random.randn(n_muestras) * 10
-        y = X_array @ coeficientes + ruido
-    else:
-        # Convertir y a numpy
-        if isinstance(y, pd.Series):
-            y = y.values
-        elif not isinstance(y, np.ndarray):
-            y = np.array(y)
-        y = y.flatten()
-    
-    # Convertir X a formato correcto
-    X_array = X_array.reshape(-1, n_features)
+    # Generar y reproducible (misma lógica que el generador original)
+    np.random.seed(42)  # Seed fijo para reproducibilidad
+    coeficientes = np.random.rand(n_features)
+    np.random.seed(42)  # Seed otra vez para y
+    ruido = np.random.randn(n_muestras) * 10
+    y = X @ coeficientes + ruido
     
     # Dividir datos: 80% entrenamiento, 20% prueba
     X_train, X_test, y_train, y_test = train_test_split(
-        X_array, y, test_size=0.2, random_state=42
+        X, y, test_size=0.2, random_state=42
     )
 
     # Entrenar modelo de Regresión Lineal
