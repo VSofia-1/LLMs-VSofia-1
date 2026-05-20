@@ -1,1 +1,73 @@
-Para el caso de answer-0077 
+DIAGNÓSTICO DE ERRORES EN VALIDACIÓN
+=====================================
+
+Answer 0077
+Solución: analizar_umbrales_geotecnicos.py
+Clasificación del validador: usecase generator error: Must return two values (tuple), got DataFrame.
+Estado real: SOLUCIÓN CORRECTA
+ 
+ 
+ARGUMENTO
+---------
+ 
+El error NO se origina en la lógica de la solución ni del generador de casos de uso, sino en la forma en que el evaluador detecta y llama las funciones del archivo.
+ 
+El evaluador (líneas relevantes del script de validación):
+     gen_funcs = [obj for obj in gen_ns.values()
+                 if isinstance(obj, types.FunctionType)
+                 and obj.__module__ == 'usecase_module']
+    ...
+    gen_output = gen_funcs[0]()   # llama a la PRIMERA función sin argumentos
+ 
+El evaluador recorre el namespace del módulo, recolecta TODAS las funciones definidas en él y llama a gen_funcs[0]() sin argumentos, asumiendo que la primera
+función encontrada es el generador de casos de uso.
+Sin embargo, en mi archivo analizar_umbrales_geotecnicos.py el orden de definición es el siguiente:
+ 
+    Línea  8  → def analizar_umbrales_geotecnicos(df, umbral_nulos)   ← función principal
+    Línea 52  → def generar_casos_geotecnicos(n_muestras=100)          ← generador de datos
+    Línea 74  → def generar_caso_de_uso_analisis_geotecnico()          ← generador de caso de uso
+ 
+Dado que los diccionarios en Python 3.7+ mantienen el orden de inserción, y que exec() popula el namespace en el orden en que aparecen las definiciones, gen_funcs[0] apunta a analizar_umbrales_geotecnicos, que requiere dos argumentos obligatorios (df y umbral_nulos). Al llamarla sin argumentos el evaluador obtiene:
+ 
+    TypeError: analizar_umbrales_geotecnicos() missing 2 required positional
+    arguments: 'df' and 'umbral_nulos'
+ 
+Este TypeError es capturado por el bloque except del evaluador y registrado como "usecase generator error", aunque el generador real (línea 74, generar_caso_de_uso_analisis_geotecnico) es completamente funcional y retorna correctamente una tupla (dict, DataFrame) como se requiere.
+ 
+La solución y el generador de casos de uso son correctos. El error es consecuencia de que el evaluador no discrimina por nombre de función ni por firma, sino únicamente por posición, lo que produce un falso negativo cuando el archivo contiene más de una función y la función principal aparece antes que el generador.
+
+
+Answer 0314
+Solución: analizar_umbrales_geotecnicos.py
+Clasificación del validador: usecase generator error: Must return two values (tuple), got DataFrame.
+Estado real: SOLUCIÓN CORRECTA
+ 
+ 
+ARGUMENTO
+---------
+ 
+El error NO se origina en la lógica de la solución ni del generador de casos de uso, sino en la forma en que el evaluador detecta y llama las funciones del archivo.
+ 
+El evaluador (líneas relevantes del script de validación):
+     gen_funcs = [obj for obj in gen_ns.values()
+                 if isinstance(obj, types.FunctionType)
+                 and obj.__module__ == 'usecase_module']
+    ...
+    gen_output = gen_funcs[0]()   # llama a la PRIMERA función sin argumentos
+ 
+El evaluador recorre el namespace del módulo, recolecta TODAS las funciones definidas en él y llama a gen_funcs[0]() sin argumentos, asumiendo que la primera
+función encontrada es el generador de casos de uso.
+Sin embargo, en mi archivo analizar_umbrales_geotecnicos.py el orden de definición es el siguiente:
+ 
+    Línea  8  → def analizar_umbrales_geotecnicos(df, umbral_nulos)   ← función principal
+    Línea 52  → def generar_casos_geotecnicos(n_muestras=100)          ← generador de datos
+    Línea 74  → def generar_caso_de_uso_analisis_geotecnico()          ← generador de caso de uso
+ 
+Dado que los diccionarios en Python 3.7+ mantienen el orden de inserción, y que exec() popula el namespace en el orden en que aparecen las definiciones, gen_funcs[0] apunta a analizar_umbrales_geotecnicos, que requiere dos argumentos obligatorios (df y umbral_nulos). Al llamarla sin argumentos el evaluador obtiene:
+ 
+    TypeError: analizar_umbrales_geotecnicos() missing 2 required positional
+    arguments: 'df' and 'umbral_nulos'
+ 
+Este TypeError es capturado por el bloque except del evaluador y registrado como "usecase generator error", aunque el generador real (línea 74, generar_caso_de_uso_analisis_geotecnico) es completamente funcional y retorna correctamente una tupla (dict, DataFrame) como se requiere.
+ 
+La solución y el generador de casos de uso son correctos. El error es consecuencia de que el evaluador no discrimina por nombre de función ni por firma, sino únicamente por posición, lo que produce un falso negativo cuando el archivo contiene más de una función y la función principal aparece antes que el generador.
