@@ -4,19 +4,28 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-def calcular_error_precio_casas(X, y, **kwargs):
+def calcular_error_precio_casas(*args, **kwargs):
     """
     Toma datos de casas y precios reales, entrena una Regresión Lineal
     y retorna el Error Cuadrático Medio (MSE) en el conjunto de prueba.
-
-    Args:
-        X (pd.DataFrame o np.ndarray): Variables predictoras.
-        y (pd.Series o np.ndarray): Precio real de las casas.
-        **kwargs: Argumentos adicionales (ignorados para compatibilidad).
-
-    Returns:
-        float: Error Cuadrático Medio (MSE) del modelo.
     """
+    
+    # Extraer X e y de args o kwargs
+    X = kwargs.get('X', args[0] if len(args) > 0 else None)
+    y = kwargs.get('y', args[1] if len(args) > 1 else None)
+    
+    # Si no se encuentran, buscar en otras claves
+    if X is None:
+        for key in ['X', 'data', 'features']:
+            if key in kwargs:
+                X = kwargs[key]
+                break
+    
+    if y is None:
+        for key in ['y', 'target', 'precio', 'price']:
+            if key in kwargs:
+                y = kwargs[key]
+                break
     
     # 1. Dividir los datos: 80% entrenamiento, 20% prueba
     X_train, X_test, y_train, y_test = train_test_split(
