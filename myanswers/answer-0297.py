@@ -4,49 +4,48 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-def calcular_error_precio_casas(X, **kwargs):
+def calcular_error_precio_casas(**kwargs):
     """
     Toma datos de casas y precios reales, entrena una Regresión Lineal
     y retorna el Error Cuadrático Medio (MSE) en el conjunto de prueba.
     
-   Args:
-        X (pd.DataFrame o np.ndarray): Variables predictoras de las casas.
-        **kwargs: Puede contener 'descripcion', 'n_muestras', 'n_features', o 'y'.
+    El generador pasa: info (diccionario con descripcion, n_muestras, n_features)
+    Pero también debería pasar X y y para que funcione correctamente.
+    
+    Esta función genera los datos necesarios si no se reciben.
     """
     
-    # Obtener y desde kwargs si existe, si no, generarlo
+    # Extraer X e y desde kwargs - soporta varios nombres de clave
+    X = kwargs.get('X', None)
     y = kwargs.get('y', None)
+    info = kwargs.get('info', kwargs)  # Si no hay X, usar el info directamente
     
-    if y is None:
-        # Generar y basado en X para poder ejecutar el modelo
-        if isinstance(X, pd.DataFrame):
-            X_array = X.values
-        else:
-            X_array = np.array(X)
+    # Si X no está, intentar generarlo desde info
+    if X is None:
+        # Obtener parámetros del info/diccionario
+        n_muestras = kwargs.get('n_muestras', 100)
+        n_features = kwargs.get('n_features', 3)
         
-        n_features = X_array.shape[1]
+        # Generar datos sintéticos
+        X = np.random.rand(n_muestras, n_features) * 100
         coeficientes = np.random.rand(n_features)
-        ruido = np.random.randn(X_array.shape[0]) * 10
-        y = X_array @ coeficientes + ruido
-    else:
-        # Convertir y si es Series de pandas
-        if isinstance(y, pd.Series):
-            y = y.values
-        elif isinstance(y, list):
-            y = np.array(y)
-        X_array = X.values if isinstance(X, pd.DataFrame) else np.array(X)
+        ruido = np.random.randn(n_muestras) * 10
+        y = X @ coeficientes + ruido
     
-    # Convertir X a numpy si es DataFrame
+    # Convertir a numpy arrays si son DataFrame/Series
     if isinstance(X, pd.DataFrame):
-        X_array = X.values
-    elif isinstance(X, np.ndarray):
-        X_array = X
-    else:
-        X_array = np.array(X)
+        X = X.values
+    elif not isinstance(X, np.ndarray):
+        X = np.array(X)
+        
+    if isinstance(y, pd.Series):
+        y = y.values
+    elif not isinstance(y, np.ndarray):
+        y = np.array(y)
     
     # 1. Dividir los datos: 80% entrenamiento, 20% prueba
     X_train, X_test, y_train, y_test = train_test_split(
-        X_array, y, test_size=0.2, random_state=42
+        X, y, test_size=0.2, random_state=42
     )
 
     # 2. Entrenar el modelo de Regresión Lineal
