@@ -6,10 +6,14 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 
-# ---------------------------------------------------------
-# FUNCIÓN PRINCIPAL
-# ---------------------------------------------------------
-def calcular_error_precio_casas(X, y, **kwargs):
+def calcular_error_precio_casas(X=None, y=None, **kwargs):
+
+    # Por si llegan dentro de kwargs
+    if X is None:
+        X = kwargs.get("X")
+
+    if y is None:
+        y = kwargs.get("y")
 
     # División entrenamiento/prueba
     X_train, X_test, y_train, y_test = train_test_split(
@@ -32,25 +36,3 @@ def calcular_error_precio_casas(X, y, **kwargs):
     mse = mean_squared_error(y_test, y_pred)
 
     return float(mse)
-
-
-# ---------------------------------------------------------
-# EJECUCIÓN
-# ---------------------------------------------------------
-if __name__ == "__main__":
-
-    info, X, y = generar_caso_de_uso_calcular_error_precio_casas()
-
-    print("=== INFORMACIÓN ===")
-    print(info)
-
-    print("\n=== DATOS X ===")
-    print(X.head())
-
-    print("\n=== DATOS y ===")
-    print(y[:5])
-
-    resultado = calcular_error_precio_casas(X, y)
-
-    print("\n=== MSE DEL MODELO ===")
-    print(resultado)
