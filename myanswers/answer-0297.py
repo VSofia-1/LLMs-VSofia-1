@@ -4,37 +4,44 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-def calcular_error_precio_casas(**kwargs):
+def calcular_error_precio_casas(X=None, **kwargs):
     """
     Toma datos de casas y precios reales, entrena una Regresión Lineal
-    y retorna el Error Cuadrático Medio (MSE).
+    y retorna el Error Cuadrático Medio (MSE) en el conjunto de prueba.
     """
     
-    # Intentar obtener X e y de kwargs
-    X = kwargs.get('X', None)
-    y = kwargs.get('y', None)
-    
-    # Si no hay X, generar datos desde los parámetros del info
+    # Si X viene como argumento posicional
     if X is None:
-        n_muestras = kwargs.get('n_muestras', 100)
-        n_features = kwargs.get('n_features', 3)
-        
-        np.random.seed(42)  # Para reproducibilidad
-        X = np.random.rand(n_muestras, n_features) * 100
-        coeficientes = np.random.rand(n_features)
-        ruido = np.random.randn(n_muestras) * 10
-        y = X @ coeficientes + ruido
+        X = kwargs.get('X', None)
     
-    # Convertir a numpy arrays
+    # Si aún no hay X, intentar otras claves
+    if X is None:
+        for key in kwargs:
+            val = kwargs[key]
+            if isinstance(val, (pd.DataFrame, np.ndarray)):
+                X = val
+                break
+    
+    # Verificar que X exista
+    if X is None:
+        raise ValueError("No se encontró X en los argumentos")
+    
+    # Convertir a numpy
     if isinstance(X, pd.DataFrame):
         X = X.values
     elif not isinstance(X, np.ndarray):
         X = np.array(X)
-        
-    if isinstance(y, pd.Series):
-        y = y.values
-    elif not isinstance(y, np.ndarray):
-        y = np.array(y)
+    
+    # Obtener n_muestras y n_features de X
+    n_muestras = X.shape[0]
+    n_features = X.shape[1]
+    
+    # Generar y reproducible (misma lógica que el generador original)
+    np.random.seed(42)  # Seed fijo para reproducibilidad
+    coeficientes = np.random.rand(n_features)
+    np.random.seed(42)  # Seed otra vez para y
+    ruido = np.random.randn(n_muestras) * 10
+    y = X @ coeficientes + ruido
     
     # Dividir datos: 80% entrenamiento, 20% prueba
     X_train, X_test, y_train, y_test = train_test_split(
