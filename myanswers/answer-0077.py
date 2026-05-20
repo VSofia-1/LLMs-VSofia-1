@@ -30,7 +30,17 @@ def generar_casos_geotecnicos(n_muestras=100):
         'pluviosidad_reciente'
     ] = np.nan
 
-    return df
+    entrada = {
+        "df": df,
+        "umbral_nulos": 0.2
+    }
+
+    salida_esperada = analizar_umbrales_geotecnicos(
+        df,
+        0.2
+    )
+
+    return entrada, salida_esperada
 # ---------------------------------------------------------
 # 1. FUNCIÓN PRINCIPAL
 # ---------------------------------------------------------
